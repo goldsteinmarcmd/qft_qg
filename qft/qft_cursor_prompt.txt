@@ -1,0 +1,44 @@
+
+GOAL: Solve a simplified version of Quantum Field Theory (QFT) using lattice simulation methods.
+
+METHOD:
+Simulate a scalar field with lambda * phi^4 interaction and a simplified gauge interaction on a 2D lattice (space x time). Use numerical evolution to analyze mass gap and confinement.
+
+INSTRUCTIONS FOR CURSOR.AI:
+
+1. Create a directory structure:
+qft_lattice_sim/
+├── main.py                # Entry point for simulation and plots
+├── lattice.py             # Field initialization and lattice update logic
+├── physics.py             # Scalar and gauge field dynamics, energy, and Polyakov loop calculations
+├── visualize.py           # Plotting utilities
+└── README.md              # Overview, usage, and parameters
+
+2. Implement a scalar field on a 2D lattice (e.g. 20x20 grid).
+3. Evolve the field using leapfrog-style integration:
+   phi += dt * (-m**2 * phi - lambda * phi**3 + laplacian(phi) + g * gauge_term(phi))
+4. Gauge term should simulate confinement: roll(phi, +1, axis=1) - phi
+5. Implement functions to calculate:
+   - Total energy (kinetic + potential)
+   - Mass gap = energy_final - energy_initial
+   - Polyakov loop = np.mean(phi, axis=1).mean()
+   - Two-point correlation function
+6. Plot the following:
+   - Energy evolution over time
+   - Polyakov loop evolution over time
+   - Correlation function at final timestep
+
+PARAMETERS TO EXPOSE:
+- lattice size (N_x, N_t)
+- lambda_phi: scalar self-interaction
+- g: gauge coupling
+- m: scalar mass
+- dt: time step
+- num_steps: number of evolution steps
+
+REQUIREMENTS:
+- Python 3.8+
+- numpy, matplotlib
+
+RUNNING:
+python main.py
