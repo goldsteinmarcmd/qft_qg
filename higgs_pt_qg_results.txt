@@ -1,0 +1,72 @@
+Higgs pT Spectrum with QG Corrections
+====================================
+
+QG Scale: 1.2e+16 TeV
+Collision Energy: 13.6 TeV
+Min Luminosity for 5σ Discovery: inf fb^-1
+Best pT for Discovery: Not found (signal too weak)
+Discoverable at HL-LHC: False
+Observable in LHC Run 3: False
+
+Detailed Results:
+-----------------
+
+Luminosity: 300 fb^-1
+  Max Significance: 0.00σ at pT = 0 GeV
+  Significance at pT = 500 GeV: 0.00σ
+  Significance at pT = 750 GeV: 0.00σ
+  Significance at pT = 1000 GeV: 0.00σ
+
+Luminosity: 1000 fb^-1
+  Max Significance: 0.00σ at pT = 0 GeV
+  Significance at pT = 500 GeV: 0.00σ
+  Significance at pT = 750 GeV: 0.00σ
+  Significance at pT = 1000 GeV: 0.00σ
+
+Luminosity: 3000 fb^-1
+  Max Significance: 0.00σ at pT = 0 GeV
+  Significance at pT = 500 GeV: 0.00σ
+  Significance at pT = 750 GeV: 0.00σ
+  Significance at pT = 1000 GeV: 0.00σ
+
+
+Alternative Experimental Signatures:
+----------------------------------
+
+higgs_pt_spectrum: Higgs pT spectrum at high momentum
+  Energy scaling: ~(E/M_QG)^2
+
+black_hole_production: Production of microscopic black holes
+  Energy scaling: ~(E/M_QG)^8
+  Best prospect: Cosmic Rays (Discovery possible)
+  Estimated significance: 3.16e+02σ
+
+graviton_production: Direct production of graviton KK modes
+  Energy scaling: ~(E/M_QG)^4
+  Best prospect: Cosmic Rays (Undetectable)
+  Estimated significance: 3.16e-04σ
+
+extra_dimension_effects: Searches for effects of extra dimensions
+  Energy scaling: ~(E/M_QG)^4
+  Best prospect: Cosmic Rays (Undetectable)
+  Estimated significance: 3.16e-03σ
+
+planck_scale_resonances: Resonances from Planck-scale states
+  Energy scaling: ~(E/M_QG)^6
+  Best prospect: Cosmic Rays (Observable effect)
+  Estimated significance: 3.16e-01σ
+
+qg_modified_dispersion: Modified dispersion relations for particles
+  Energy scaling: ~(E/M_QG)^3
+  Best prospect: Cosmic Rays (Undetectable)
+  Estimated significance: 3.16e-04σ
+
+lorentz_violation: Tests of Lorentz invariance violation
+  Energy scaling: ~(E/M_QG)^2
+  Best prospect: FCC-hh (100 TeV) (Undetectable)
+  Estimated significance: 5.40e-05σ
+
+cosmic_rays: Ultra-high energy cosmic ray physics
+  Energy scaling: ~(E/M_QG)^3
+  Best prospect: Cosmic Rays (Undetectable)
+  Estimated significance: 3.16e-02σ

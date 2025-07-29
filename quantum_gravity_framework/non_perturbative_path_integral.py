@@ -27,7 +27,7 @@ class NonPerturbativePathIntegral:
     Implements non-perturbative path integral techniques using tensor networks.
     """
     
-    def __init__(self, dim=4, lattice_size=10, beta=1.0, coupling=0.1):
+    def __init__(self, dim=4, lattice_size=6, beta=1.0, coupling=0.1):  # Reduced from 10 to prevent memory issues
         """
         Initialize the non-perturbative path integral.
         
@@ -52,7 +52,7 @@ class NonPerturbativePathIntegral:
         
         # Initialize discretized spacetime
         self.spacetime = DiscretizedSpacetime(
-            dimensions=dim,
+            dim=dim,
             size=lattice_size,
             boundary="periodic"
         )
@@ -64,7 +64,7 @@ class NonPerturbativePathIntegral:
         # Store results
         self.results = {}
     
-    def build_tensor_network(self, bond_dim=4):
+    def build_tensor_network(self, bond_dim=8):
         """
         Build tensor network representation of the path integral.
         
@@ -82,10 +82,9 @@ class NonPerturbativePathIntegral:
         
         # Create tensor network with appropriate structure
         self.tensor_network = TensorNetworkStates(
-            dimensions=self.dim,
-            size=self.lattice_size,
-            bond_dimension=bond_dim,
-            boundary_condition="periodic"
+            dim=self.dim,
+            bond_dim=bond_dim,
+            network_size=self.lattice_size
         )
         
         # Initialize tensors to represent the action
@@ -97,27 +96,26 @@ class NonPerturbativePathIntegral:
         """
         Initialize tensors that encode the action of the theory.
         """
-        # Get the tensor network graph
-        graph = self.tensor_network.graph
+        # The TensorNetworkStates class uses tensors and connections
+        # We'll initialize the tensors to represent the action
         
         # Different actions depending on what we're studying
-        # For scalar field theory
-        for node in graph.nodes():
-            # Each tensor at a site represents e^(-S_site)
+        # For scalar field theory, we encode the action in the tensor structure
+        
+        # Initialize action parameters for each tensor
+        for node_id in range(self.tensor_network.num_nodes):
+            # Each tensor represents e^(-S_site) where S_site is the local action
             # For a scalar φ⁴ theory, S_site ~ m²φ² + λφ⁴ + φ∂²φ terms
-            # Here we use a simplified representation
             
-            # Create bond tensors to encode kinetic terms
-            for neighbor in graph.neighbors(node):
-                if node < neighbor:  # To avoid double counting
-                    # Bond tensor representing e^(-β φₓφᵧ)
-                    bond_weight = self.beta
-                    graph.edges[node, neighbor]['weight'] = bond_weight
+            # Store action parameters in the tensor network
+            if not hasattr(self.tensor_network, 'action_params'):
+                self.tensor_network.action_params = {}
             
-            # Create site tensors to encode mass & interaction terms
-            # φ² and φ⁴ terms
-            graph.nodes[node]['mass'] = self.beta * 0.5  # m²/2 coefficient
-            graph.nodes[node]['coupling'] = self.beta * self.coupling  # λ/4! coefficient
+            self.tensor_network.action_params[node_id] = {
+                'mass_squared': self.beta * 0.5,  # m²/2 coefficient
+                'coupling': self.beta * self.coupling,  # λ/4! coefficient
+                'kinetic': self.beta  # Kinetic term coefficient
+            }
     
     def compute_path_integral(self, observable="partition_function", num_samples=1000):
         """

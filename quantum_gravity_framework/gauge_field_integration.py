@@ -22,7 +22,7 @@ class GaugeFieldIntegration:
     """
     
     def __init__(self, gauge_group="U1", dim_uv=2.0, dim_ir=4.0, 
-                 transition_scale=1.0, lattice_size=10, beta=1.0):
+                 transition_scale=1.0, lattice_size=6, beta=1.0):  # Reduced from 10 to prevent memory issues
         """
         Initialize gauge field integration.
         
@@ -154,7 +154,8 @@ class GaugeFieldIntegration:
                     # proper SU(3) parameterization
                     H = np.random.randn(3, 3) + 1j * np.random.randn(3, 3)
                     H = (H + H.conj().T) / 2  # Make Hermitian
-                    U, _ = np.linalg.eigh(H)
+                    eigenvalues, eigenvectors = np.linalg.eigh(H)
+                    U = eigenvectors  # Use eigenvectors as the unitary matrix
                     Udet = np.exp(-1j * np.angle(np.linalg.det(U)))  # Ensure det(U)=1
                     link_var = U * Udet
                 

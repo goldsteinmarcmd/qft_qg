@@ -1,0 +1,191 @@
+# Quantum Field Theory & Quantum Gravity Research Project Rules
+
+
+- Keep responses brief and to the point. I am  not a subject matter expert. Rely on others thoughts instead of your intutition.
+ 
+
+
+## Project Context
+This is a theoretical physics research project focusing on:
+- Quantum Field Theory (QFT) implementations
+- Quantum Gravity (QG) frameworks and unification
+- Black hole physics and information paradox
+- Lattice field theory and non-perturbative methods
+- Path integral formulations and renormalization
+- Gauge theory and effective field theory
+- Experimental predictions and phenomenology
+- Numerical simulations and computational physics
+
+## Code Style & Standards
+
+### Python Conventions
+- Follow PEP 8 with 88-character line limit (Black formatter standard)
+- Use type hints for all function signatures
+- Prefer descriptive variable names that reflect physics concepts
+- Use docstrings with NumPy/SciPy style for all functions and classes
+- Include units and physical dimensions in variable names where applicable
+
+### Physics-Specific Naming
+- Use standard physics notation: `psi` for wavefunctions, `H` for Hamiltonians
+- Suffix with units: `mass_gev`, `energy_mev`, `time_sec`
+- Use clear prefixes: `qft_`, `qg_`, `bh_` for different physics domains
+- Follow particle physics conventions: `pt` (transverse momentum), `eta` (pseudorapidity)
+
+### Mathematical Rigor
+- Always include physical units and dimensional analysis
+- Document mathematical derivations in docstrings
+- Include references to relevant papers/textbooks
+- Validate physical constraints (causality, unitarity, etc.)
+- Use symbolic math (SymPy) for analytical expressions when appropriate
+
+## Documentation Requirements
+
+### Function Documentation
+- Include physics background and theoretical context
+- Specify input/output units and ranges
+- Document assumptions and approximations
+- Include example usage with realistic physics parameters
+- Reference relevant equations or theoretical frameworks
+
+### Mathematical Expressions
+- Use LaTeX notation in docstrings for complex equations
+- Include derivation steps for non-trivial calculations
+- Document gauge choices and regularization schemes
+- Specify coordinate systems and metric signatures
+
+## Testing & Validation
+
+### Physics Validation
+- Include dimensional analysis tests
+- Test against known analytical solutions
+- Validate conservation laws (energy, momentum, charge)
+- Check gauge invariance where applicable
+- Test limits (classical, non-relativistic, etc.)
+
+### Numerical Accuracy
+- Use appropriate numerical precision for physics scales
+- Include convergence tests for iterative methods
+- Validate against experimental data where available
+- Test numerical stability across parameter ranges
+
+## Scientific Computing Best Practices
+
+### Dependencies
+- Prefer NumPy/SciPy for numerical computations
+- Use Matplotlib/Seaborn for physics visualizations
+- Use SymPy for symbolic mathematics
+- Consider JAX for automatic differentiation and GPU acceleration
+- Use appropriate scientific libraries (QuTiP for quantum systems, etc.)
+
+### Performance
+- Profile computationally intensive physics calculations
+- Use vectorized operations for field theory computations
+- Consider parallel processing for Monte Carlo simulations
+- Cache expensive calculations (form factors, integrals)
+
+### Data Management
+- Use HDF5 for large datasets (lattice configurations, simulation results)
+- Include metadata with physical parameters
+- Version control numerical results with clear provenance
+- Use appropriate file formats for different data types
+
+## Visualization Standards
+
+### Physics Plots
+- Always include proper axis labels with units
+- Use physics-appropriate scales (log for cross-sections, linear for correlations)
+- Include error bars and uncertainty bands
+- Use colorblind-friendly palettes
+- Add clear legends explaining physical quantities
+
+### Feynman Diagrams
+- Use consistent notation and conventions
+- Label external particles and momentum flow
+- Include coupling constants and interaction vertices
+- Document diagram generation code clearly
+
+## Experimental Connections
+
+### Phenomenology
+- Include realistic experimental parameters
+- Consider detector resolutions and systematic uncertainties
+- Connect theoretical predictions to observable quantities
+- Document experimental signatures and selection criteria
+
+### Data Analysis
+- Follow particle physics analysis conventions
+- Include proper statistical treatment
+- Document cuts and selection criteria
+- Provide uncertainty propagation
+
+## Code Organization
+
+### Module Structure
+- Separate theoretical formalism from numerical implementation
+- Group related physics concepts in dedicated modules
+- Maintain clear separation between QFT and QG components
+- Include examples and demonstrations for each major concept
+
+### Import Guidelines
+- Use relative imports within the physics modules
+- Import physics constants from a central constants module
+- Group imports by category (stdlib, third-party, local)
+- Use clear aliases for physics libraries (np, plt, sp for scipy)
+
+## Research Workflow
+
+### Version Control
+- Commit working theoretical implementations frequently
+- Tag stable versions for paper submissions
+- Include clear commit messages describing physics changes
+- Maintain separate branches for different theoretical approaches
+
+### Reproducibility
+- Include random seeds for Monte Carlo simulations
+- Document computational environment and dependencies
+- Store parameters in configuration files
+- Include scripts to reproduce all figures and results
+
+## Error Handling
+
+### Physics Errors
+- Raise descriptive errors for unphysical parameters
+- Check dimensional consistency at runtime where possible
+- Validate input ranges for physical applicability
+- Include warnings for approximations and their validity ranges
+
+### Numerical Errors
+- Handle convergence failures gracefully
+- Check for NaN/infinity in critical calculations
+- Provide fallback methods for numerical instability
+- Include diagnostic information for debugging
+
+## Comments & Communication
+
+### Code Comments
+- Explain physics intuition behind mathematical steps
+- Document numerical algorithms and their physics motivation
+- Include citations to relevant literature
+- Explain gauge choices and coordinate systems
+
+### Collaboration
+- Use clear variable names that non-experts can understand
+- Include background context for specialized physics concepts
+- Document interfaces between different theoretical frameworks
+- Maintain compatibility across different physics modules
+
+## Performance Considerations
+
+### Memory Usage
+- Be mindful of large field configurations and lattice sizes
+- Use efficient data structures for sparse matrices
+- Consider memory mapping for large datasets
+- Profile memory usage in Monte Carlo simulations
+
+### Computational Efficiency
+- Optimize inner loops in field theory calculations
+- Use appropriate numerical libraries (BLAS, LAPACK)
+- Consider GPU acceleration for suitable calculations
+- Cache expensive function evaluations
+
+Remember: This is cutting-edge theoretical physics research. Prioritize correctness and physical insight over premature optimization. Every implementation should be traceable back to the underlying theoretical principles. 

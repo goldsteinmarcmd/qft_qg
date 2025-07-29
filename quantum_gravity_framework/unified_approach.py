@@ -21,7 +21,7 @@ class UnifiedQGApproach:
     """
     
     def __init__(self, dim_uv=2.0, dim_ir=4.0, transition_scale=1.0, 
-                 lattice_size=10, beta=1.0, coupling=0.1):
+                 lattice_size=6, beta=1.0, coupling=0.1):  # Reduced from 10 to prevent memory issues
         """
         Initialize the unified QG approach.
         

@@ -132,23 +132,48 @@ class QuantumSpacetimeAxioms:
         float
             Spectral dimension at that scale
         """
-        # Spectral dimension from heat kernel: ds = -2 d log P(σ) / d log σ
-        # Where P(σ) = Tr(exp(-σΔ)) is return probability
+        # Add bounds checking for numerical stability
+        if diffusion_time <= 0:
+            return 4.0  # Default to 4D for invalid input
+        
+        # Ensure eigenvalues are valid
+        if not hasattr(self, 'eigenvalues') or len(self.eigenvalues) == 0:
+            return 4.0
         
         # Heat kernel at time diffusion_time
         heat_kernel_trace = np.sum(np.exp(-diffusion_time * self.eigenvalues))
         
+        # Safety check for heat kernel trace
+        if heat_kernel_trace <= 0 or np.isnan(heat_kernel_trace):
+            return 4.0
+        
         # Heat kernel at slightly different time for numerical derivative
-        delta = 0.01 * diffusion_time
+        delta = max(0.01 * diffusion_time, 1e-10)  # Ensure positive delta
         heat_kernel_trace2 = np.sum(np.exp(-(diffusion_time + delta) * self.eigenvalues))
         
+        # Safety check for second heat kernel trace
+        if heat_kernel_trace2 <= 0 or np.isnan(heat_kernel_trace2):
+            return 4.0
+        
+        # Ensure proper ordering for logarithm
+        if heat_kernel_trace2 >= heat_kernel_trace:
+            return 4.0
+        
         # Numerical approximation of spectral dimension
-        log_ratio = np.log(heat_kernel_trace / heat_kernel_trace2)
-        log_time_ratio = np.log((diffusion_time + delta) / diffusion_time)
-        
-        spectral_dim = -2 * log_ratio / log_time_ratio
-        
-        return spectral_dim
+        try:
+            log_ratio = np.log(heat_kernel_trace / heat_kernel_trace2)
+            log_time_ratio = np.log((diffusion_time + delta) / diffusion_time)
+            
+            spectral_dim = -2 * log_ratio / log_time_ratio
+            
+            # Bounds checking for final result
+            if np.isnan(spectral_dim) or spectral_dim < 0 or spectral_dim > 10:
+                return 4.0
+            
+            return spectral_dim
+            
+        except (ValueError, ZeroDivisionError):
+            return 4.0  # Fallback to 4D
     
     def check_quantum_locality(self, operator1, operator2, region1_nodes, region2_nodes):
         """

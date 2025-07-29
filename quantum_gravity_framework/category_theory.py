@@ -254,27 +254,53 @@ class CategoryTheoryGeometry:
     incorporating concepts from 2-categories and groupoids.
     """
     
-    def __init__(self, dim=4, n_points=50):
-        self.dim = dim
+    def __init__(self, dim=4, n_points=20):  # Reduced from 50 to prevent memory issues
+        self.dim = int(dim)  # Ensure dimension is integer
         self.n_points = n_points
         
-        # Initialize category structure
-        self.objects = self._initialize_objects()
-        self.morphisms = self._initialize_morphisms()
-        self.two_morphisms = self._initialize_two_morphisms()
+        # Initialize category structure with timeout protection
+        import signal
+        import time
         
-        # Structure for composition operations
-        self.composition_table = self._create_composition_table()
+        # Set timeout for initialization (30 seconds)
+        def timeout_handler(signum, frame):
+            raise TimeoutError("Category theory initialization timed out")
         
-        # 2-Hilbert space structure
-        self.two_inner_products = self._initialize_two_inner_products()
+        # Set up timeout
+        signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(30)
         
-        # New: Higher category structures
-        self.three_morphisms = self._initialize_three_morphisms()
-        
-        # New: Topos structure
-        self.subobject_classifier = self._initialize_subobject_classifier()
-        self.presheaves = self._initialize_presheaves()
+        try:
+            self.objects = self._initialize_objects()
+            self.morphisms = self._initialize_morphisms()
+            self.two_morphisms = self._initialize_two_morphisms()
+            
+            # Structure for composition operations
+            self.composition_table = self._create_composition_table()
+            
+            # 2-Hilbert space structure
+            self.two_inner_products = self._initialize_two_inner_products()
+            
+            # New: Higher category structures
+            self.three_morphisms = self._initialize_three_morphisms()
+            
+            # New: Topos structure
+            self.subobject_classifier = self._initialize_subobject_classifier()
+            self.presheaves = self._initialize_presheaves()
+            
+        except TimeoutError:
+            print("Warning: Category theory initialization timed out. Using fallback values.")
+            # Fallback to minimal structures
+            self.objects = {f'obj_{i}': {'dimension': dim, 'properties': {}} for i in range(5)}
+            self.morphisms = {}
+            self.two_morphisms = {}
+            self.composition_table = {}
+            self.two_inner_products = {}
+            self.three_morphisms = {}
+            self.subobject_classifier = {}
+            self.presheaves = {}
+        finally:
+            signal.alarm(0)  # Cancel timeout
         
     def _initialize_objects(self):
         """Initialize objects (points) in the category."""
@@ -479,29 +505,51 @@ class CategoryTheoryGeometry:
         # Represent commutativity of different paths
         paths = self._find_composite_paths(max_length=2)
         
+        # Add safety check for empty paths
+        if not paths:
+            print("Warning: No composite paths found for 2-morphisms")
+            return two_morphisms
+        
+        # Limit the number of combinations to prevent explosion
+        max_combinations = 100  # Reduced from 1000 to prevent memory issues
+        combination_count = 0
+        
         for p1, p2 in itertools.combinations(paths, 2):
+            combination_count += 1
+            if combination_count > max_combinations:
+                print(f"Warning: Reached combination limit in 2-morphism initialization. Created {len(two_morphisms)} 2-morphisms.")
+                break
+            
+            # Safety check for path validity
+            if not p1 or not p2 or len(p1) == 0 or len(p2) == 0:
+                continue
+                
             # Check if paths have same start and end
-            if p1[0] == p2[0] and p1[-1] == p2[-1]:
-                # Create a 2-morphism between the composite morphisms
-                comp1_id = "_then_".join(p1)
-                comp2_id = "_then_".join(p2)
-                
-                two_morph_id = f"2m_comp_{comp1_id}_to_{comp2_id}"
-                
-                # Create properties based on path characteristics
-                # In a full QG theory, this would encode curvature
-                properties = {
-                    'phase': np.random.uniform(0, 2*np.pi),
-                    'amplitude': np.random.random(),
-                    'is_composite': True
-                }
-                
-                two_morphisms[two_morph_id] = {
-                    'source_morphism': comp1_id,
-                    'target_morphism': comp2_id,
-                    'properties': properties,
-                    'is_composite': True
-                }
+            try:
+                if p1[0] == p2[0] and p1[-1] == p2[-1]:
+                    # Create a 2-morphism between the composite morphisms
+                    comp1_id = "_then_".join(p1)
+                    comp2_id = "_then_".join(p2)
+                    
+                    two_morph_id = f"2m_comp_{comp1_id}_to_{comp2_id}"
+                    
+                    # Create properties based on path characteristics
+                    # In a full QG theory, this would encode curvature
+                    properties = {
+                        'phase': np.random.uniform(0, 2*np.pi),
+                        'amplitude': np.random.random(),
+                        'is_composite': True
+                    }
+                    
+                    two_morphisms[two_morph_id] = {
+                        'source_morphism': comp1_id,
+                        'target_morphism': comp2_id,
+                        'properties': properties,
+                        'is_composite': True
+                    }
+            except (IndexError, TypeError) as e:
+                print(f"Warning: Error processing path combination: {e}")
+                continue
         
         return two_morphisms
     
@@ -520,21 +568,35 @@ class CategoryTheoryGeometry:
             target = morph['target']
             graph.add_edge(source, target, id=morph_id)
             
-        # Find all paths up to max_length
+        # Find all paths up to max_length with iteration limits
         paths = []
+        max_iterations = 100  # Reduced from 1000 to prevent memory issues
+        iteration_count = 0
+        
         for source in graph.nodes():
             for target in graph.nodes():
                 if source != target:
+                    iteration_count += 1
+                    if iteration_count > max_iterations:
+                        print(f"Warning: Reached iteration limit in path finding. Returning {len(paths)} paths.")
+                        return paths
+                    
                     # Find paths from source to target
-                    for path in nx.all_simple_paths(graph, source, target, cutoff=max_length):
-                        if len(path) > 1:  # At least one morphism
-                            # Convert node path to morphism path
-                            morph_path = []
-                            for i in range(len(path) - 1):
-                                edge_data = graph.get_edge_data(path[i], path[i+1])
-                                morph_path.append(edge_data['id'])
+                    try:
+                        for path in nx.all_simple_paths(graph, source, target, cutoff=max_length):
+                            if len(path) > 1:  # At least one morphism
+                                # Convert node path to morphism path
+                                morph_path = []
+                                for i in range(len(path) - 1):
+                                    edge_data = graph.get_edge_data(path[i], path[i+1])
+                                    if edge_data and 'id' in edge_data:
+                                        morph_path.append(edge_data['id'])
                                 
-                            paths.append(morph_path)
+                                if morph_path:  # Only add if we have a valid morphism path
+                                    paths.append(morph_path)
+                    except (nx.NetworkXError, nx.NetworkXNoPath):
+                        # Skip if no paths exist
+                        continue
         
         return paths
     

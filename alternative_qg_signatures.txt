@@ -1,0 +1,109 @@
+Alternative Signatures for QG Effects
+===================================
+
+QG Scale: 1.2e+16 TeV
+
+black_hole_production: Production of microscopic black holes
+  Energy scaling: ~(E/M_QG)^8
+  LHC sensitivity: None
+  Future facility sensitivity: Medium
+  Theoretical cleanliness: Medium
+  Discovery prospects:
+    LHC (13.6 TeV): 1.00e-12σ (Undetectable)
+    HL-LHC (14 TeV): 4.01e-12σ (Undetectable)
+    HE-LHC (27 TeV): 1.74e-09σ (Undetectable)
+    FCC-hh (100 TeV): 8.52e-05σ (Undetectable)
+    Cosmic Rays: 3.16e+02σ (Discovery possible)
+    Gravitational Waves: 1.00e-27σ (Undetectable)
+
+planck_scale_resonances: Resonances from Planck-scale states
+  Energy scaling: ~(E/M_QG)^6
+  LHC sensitivity: None
+  Future facility sensitivity: Low
+  Theoretical cleanliness: Low
+  Discovery prospects:
+    LHC (13.6 TeV): 1.00e-11σ (Undetectable)
+    HL-LHC (14 TeV): 3.78e-11σ (Undetectable)
+    HE-LHC (27 TeV): 4.39e-09σ (Undetectable)
+    FCC-hh (100 TeV): 1.58e-05σ (Undetectable)
+    Cosmic Rays: 3.16e-01σ (Observable effect)
+    Gravitational Waves: 1.00e-22σ (Undetectable)
+
+cosmic_rays: Ultra-high energy cosmic ray physics
+  Energy scaling: ~(E/M_QG)^3
+  LHC sensitivity: N/A
+  Future facility sensitivity: Medium
+  Theoretical cleanliness: Low
+  Discovery prospects:
+    LHC (13.6 TeV): 1.00e-06σ (Undetectable)
+    HL-LHC (14 TeV): 3.46e-06σ (Undetectable)
+    HE-LHC (27 TeV): 5.57e-05σ (Undetectable)
+    FCC-hh (100 TeV): 3.97e-03σ (Undetectable)
+    Cosmic Rays: 3.16e-02σ (Undetectable)
+    Gravitational Waves: 1.00e-11σ (Undetectable)
+
+extra_dimension_effects: Searches for effects of extra dimensions
+  Energy scaling: ~(E/M_QG)^4
+  LHC sensitivity: None
+  Future facility sensitivity: Medium
+  Theoretical cleanliness: Medium
+  Discovery prospects:
+    LHC (13.6 TeV): 1.00e-09σ (Undetectable)
+    HL-LHC (14 TeV): 3.56e-09σ (Undetectable)
+    HE-LHC (27 TeV): 1.11e-07σ (Undetectable)
+    FCC-hh (100 TeV): 2.92e-05σ (Undetectable)
+    Cosmic Rays: 3.16e-03σ (Undetectable)
+    Gravitational Waves: 1.00e-16σ (Undetectable)
+
+graviton_production: Direct production of graviton KK modes
+  Energy scaling: ~(E/M_QG)^4
+  LHC sensitivity: None
+  Future facility sensitivity: Low
+  Theoretical cleanliness: Medium
+  Discovery prospects:
+    LHC (13.6 TeV): 1.00e-10σ (Undetectable)
+    HL-LHC (14 TeV): 3.56e-10σ (Undetectable)
+    HE-LHC (27 TeV): 1.11e-08σ (Undetectable)
+    FCC-hh (100 TeV): 2.92e-06σ (Undetectable)
+    Cosmic Rays: 3.16e-04σ (Undetectable)
+    Gravitational Waves: 1.00e-17σ (Undetectable)
+
+qg_modified_dispersion: Modified dispersion relations for particles
+  Energy scaling: ~(E/M_QG)^3
+  LHC sensitivity: None
+  Future facility sensitivity: Medium
+  Theoretical cleanliness: High
+  Discovery prospects:
+    LHC (13.6 TeV): 1.00e-08σ (Undetectable)
+    HL-LHC (14 TeV): 3.46e-08σ (Undetectable)
+    HE-LHC (27 TeV): 5.57e-07σ (Undetectable)
+    FCC-hh (100 TeV): 3.97e-05σ (Undetectable)
+    Cosmic Rays: 3.16e-04σ (Undetectable)
+    Gravitational Waves: 1.00e-13σ (Undetectable)
+
+lorentz_violation: Tests of Lorentz invariance violation
+  Energy scaling: ~(E/M_QG)^2
+  LHC sensitivity: Very Low
+  Future facility sensitivity: Medium
+  Theoretical cleanliness: High
+  Discovery prospects:
+    LHC (13.6 TeV): 1.00e-07σ (Undetectable)
+    HL-LHC (14 TeV): 3.35e-07σ (Undetectable)
+    HE-LHC (27 TeV): 2.80e-06σ (Undetectable)
+    FCC-hh (100 TeV): 5.40e-05σ (Undetectable)
+    Cosmic Rays: 3.16e-05σ (Undetectable)
+    Gravitational Waves: 1.00e-10σ (Undetectable)
+
+higgs_pt_spectrum: Higgs pT spectrum at high momentum
+  Energy scaling: ~(E/M_QG)^2
+  LHC sensitivity: Very Low
+  Future facility sensitivity: Low
+  Theoretical cleanliness: High
+  Discovery prospects:
+    LHC (13.6 TeV): 0.00e+00σ (Undetectable)
+    HL-LHC (14 TeV): 0.00e+00σ (Undetectable)
+    HE-LHC (27 TeV): 0.00e+00σ (Undetectable)
+    FCC-hh (100 TeV): 0.00e+00σ (Undetectable)
+    Cosmic Rays: 0.00e+00σ (Undetectable)
+    Gravitational Waves: 0.00e+00σ (Undetectable)
+

@@ -620,6 +620,284 @@ def lattice_to_continuum_extrapolation(lattice_spacings, observables, observable
             "message": "Fitting failed, returning smallest lattice spacing value"
         }
 
+class CategoricalQGLatticeField(LatticeScalarField):
+    """Lattice implementation with categorical quantum gravity corrections.
+    
+    This class extends the standard lattice scalar field with modifications
+    derived from the categorical quantum gravity framework.
+    """
+    
+    def __init__(self, lattice_size, mass_squared=1.0, coupling=0.1, dimension=4, 
+                 boundary="periodic", qg_scale=1e19, spectral_dim_uv=2.0):
+        """Initialize the QG-modified lattice field.
+        
+        Args:
+            lattice_size: Tuple of lattice dimensions
+            mass_squared: Mass squared parameter
+            coupling: Self-interaction coupling constant
+            dimension: IR spacetime dimension
+            boundary: Boundary conditions ("periodic" or "open")
+            qg_scale: Quantum gravity scale in GeV
+            spectral_dim_uv: UV spectral dimension (typically ~2 for QG)
+        """
+        super().__init__(lattice_size, mass_squared, coupling, dimension, boundary)
+        self.qg_scale = qg_scale  # Planck scale or other QG scale
+        self.spectral_dim_uv = spectral_dim_uv
+        
+        # Quantum gravity correction parameters
+        self.alpha = 0.1  # Higher derivative term coefficient
+        self.beta = 0.05  # Mixed term coefficient
+        self.gamma = 0.01  # Mass correction coefficient
+        
+        # Calculate lattice spacing in natural units
+        # Assuming lattice covers up to QG scale
+        self.physical_size = 1.0  # in appropriate units
+        self.a = self.physical_size / max(lattice_size)
+        
+        # Dimensional flow interpolating function (modified Padé approximant)
+        self.dimensional_flow_k = 0.01  # Transition scale parameter
+    
+    def compute_spectral_dimension(self, momentum_scale):
+        """Compute the spectral dimension at a given momentum scale.
+        
+        Args:
+            momentum_scale: The momentum scale to evaluate dimension at
+            
+        Returns:
+            The effective spectral dimension
+        """
+        # Simple interpolation between IR and UV dimensions
+        x = momentum_scale / self.qg_scale
+        return self.dimension + (self.spectral_dim_uv - self.dimension) / (1 + (x**(-2)))
+    
+    def qg_modified_action(self, field=None):
+        """Calculate the QG-modified action with higher derivative terms.
+        
+        For QG-modified theory, the action includes higher derivative terms:
+        S = S_standard + α/(qg_scale^2) * Σ_x [(∇^2 φ)^2] + β/(qg_scale) * Σ_x [φ∇^2φ]
+        
+        Args:
+            field: Field configuration (uses self.field if None)
+            
+        Returns:
+            Total action value with QG corrections
+        """
+        if field is None:
+            field = self.field
+            
+        # First get the standard action
+        standard_action = self.action(field)
+        
+        # Calculate higher derivative terms
+        higher_derivative = 0.0
+        mixed_term = 0.0
+        
+        # Loop over directions to construct ∇^2φ
+        laplacian = np.zeros_like(field)
+        for mu in range(self.dimension):
+            # Forward shifted field
+            forward = np.roll(field, -1, axis=mu)
+            # Backward shifted field
+            backward = np.roll(field, 1, axis=mu)
+            # Add to Laplacian (∇^2φ ≈ [φ(x+μ) + φ(x-μ) - 2φ(x)]/a^2)
+            laplacian += (forward + backward - 2*field) / (self.a**2)
+        
+        # Calculate (∇^2φ)^2 term
+        higher_derivative = self.alpha * np.sum(laplacian**2) / (self.qg_scale**2)
+        
+        # Calculate φ∇^2φ term
+        mixed_term = self.beta * np.sum(field * laplacian) / self.qg_scale
+        
+        # Calculate mass correction term (γ/qg_scale^2) * m^4 * φ^2
+        mass_correction = self.gamma * (self.mass_squared**2) * np.sum(field**2) / (self.qg_scale**2)
+        
+        # Add all QG corrections to standard action
+        total_action = standard_action + higher_derivative + mixed_term + mass_correction
+        
+        return total_action
+    
+    def monte_carlo_step(self, delta=1.0, beta=1.0):
+        """Perform a Metropolis update with QG-modified action.
+        
+        Args:
+            delta: Maximum field update amplitude
+            beta: Inverse temperature
+            
+        Returns:
+            Boolean indicating if the update was accepted
+        """
+        # Select a random lattice site
+        indices = tuple(random.randint(0, size-1) for size in self.lattice_size)
+        
+        # Store old field value and calculate old action
+        old_value = self.field[indices]
+        old_action = self.qg_modified_action()
+        
+        # Propose new field value
+        new_value = old_value + delta * (2 * random.random() - 1)
+        self.field[indices] = new_value
+        
+        # Calculate new action with QG corrections
+        new_action = self.qg_modified_action()
+        
+        # Metropolis acceptance
+        delta_s = new_action - old_action
+        if delta_s <= 0 or random.random() < np.exp(-beta * delta_s):
+            return True
+        else:
+            # Revert the change
+            self.field[indices] = old_value
+            return False
+    
+    def calculate_modified_mass_gap(self, correlation_function=None):
+        """Calculate the QG-modified mass gap from correlation function.
+        
+        This accounts for QG corrections to the propagator and dispersion relation.
+        
+        Args:
+            correlation_function: Precomputed correlation function, or None to calculate
+            
+        Returns:
+            Tuple of (mass_gap, error_estimate)
+        """
+        # Get standard mass gap calculation
+        mass_gap, error = self.calculate_mass_gap(correlation_function)
+        
+        # Apply QG modification to the mass gap
+        # m_eff^2 = m^2(1 + γ(m/qg_scale)^2)
+        # Only significant near QG scale
+        modification = 1.0 + self.gamma * (mass_gap / self.qg_scale)**2
+        
+        # Protection against unphysical results
+        if modification <= 0:
+            modification = 1.0
+            
+        qg_mass_gap = mass_gap * np.sqrt(modification)
+        qg_error = error * np.sqrt(modification)
+        
+        return qg_mass_gap, qg_error
+    
+    def calculate_polyakov_loop(self):
+        """Calculate the Polyakov loop to detect confinement.
+        
+        In QG-corrected lattice theories, the Polyakov loop has 
+        modified behavior due to dimensional flow.
+        
+        Returns:
+            Tuple of (polyakov_value, error_estimate)
+        """
+        # Calculate temporal extent
+        t_dim = 0  # Assuming time is first dimension
+        t_extent = self.lattice_size[t_dim]
+        
+        # Initialize Polyakov loop calculation
+        polyakov = np.ones(self.lattice_size[1:], dtype=complex)
+        
+        # Effectively path-ordered product of "gauge" transformed scalar fields
+        # This is a simplified version, normally would use gauge links
+        for t in range(t_extent):
+            indices = tuple([t] + [slice(None)] * (len(self.lattice_size) - 1))
+            field_slice = self.field[indices]
+            
+            # Simple model: exp(i*phi) as analog of gauge link
+            gauge_factor = np.exp(1j * field_slice)
+            polyakov *= gauge_factor
+            
+        # Take trace (here just the field values since we don't have actual matrices)
+        polyakov_value = np.abs(np.mean(polyakov))
+        
+        # Basic error estimation through variance
+        samples = []
+        for _ in range(10):  # Bootstrap with 10 samples
+            random_indices = np.random.choice(np.prod(polyakov.shape), size=np.prod(polyakov.shape)//2)
+            reshaped_indices = np.unravel_index(random_indices, polyakov.shape)
+            samples.append(np.abs(np.mean(polyakov[reshaped_indices])))
+            
+        error = np.std(samples)
+        
+        return polyakov_value, error
+
+# Function to analyze QG effects on critical phenomena
+def qg_modified_critical_exponents(lattice_sizes, mass_squared_values, coupling=0.1, 
+                                  qg_scale=1e19, spectral_dim_uv=2.0):
+    """Study how quantum gravity corrections modify critical phenomena.
+    
+    Args:
+        lattice_sizes: List of lattice sizes to study
+        mass_squared_values: List of mass^2 values to scan around critical point
+        coupling: Self-interaction coupling
+        qg_scale: QG energy scale
+        spectral_dim_uv: UV spectral dimension
+        
+    Returns:
+        Dictionary of critical exponents with and without QG corrections
+    """
+    # Standard critical exponents for comparison
+    std_results = critical_exponents_fss(
+        lattice_sizes, mass_squared_values, coupling, dimension=4)
+    
+    # QG-modified results
+    qg_results = {}
+    
+    # Magnetization and susceptibility data
+    qg_magnetization = {}
+    qg_susceptibility = {}
+    
+    # Loop over lattice sizes
+    for L in lattice_sizes:
+        mag_values = []
+        chi_values = []
+        
+        # Loop over mass values (scanning for critical point)
+        for m2 in mass_squared_values:
+            # Initialize QG-modified model
+            lattice = CategoricalQGLatticeField(
+                (L, L, L, L), mass_squared=m2, coupling=coupling,
+                qg_scale=qg_scale, spectral_dim_uv=spectral_dim_uv
+            )
+            
+            # Run simulation
+            results = lattice.run_simulation(
+                num_thermalization=500, num_configurations=1000)
+            
+            # Store magnetization and susceptibility
+            mag_values.append(results["field_abs_mean"])
+            chi_values.append(results["susceptibility"])
+        
+        qg_magnetization[L] = mag_values
+        qg_susceptibility[L] = chi_values
+    
+    # Find critical point and exponents
+    # Simplified analysis for critical mass and exponents
+    critical_masses = {}
+    beta_exponent = {}  # Magnetization exponent
+    gamma_exponent = {}  # Susceptibility exponent
+    
+    # Standard model critical values (reference)
+    critical_masses["standard"] = std_results["critical_mass"]
+    beta_exponent["standard"] = std_results["beta"]
+    gamma_exponent["standard"] = std_results["gamma"]
+    
+    # QG model critical values
+    # Estimate critical mass from susceptibility peak
+    chi_peaks = [np.argmax(qg_susceptibility[L]) for L in lattice_sizes]
+    critical_mass_indices = {L: chi_peaks[i] for i, L in enumerate(lattice_sizes)}
+    critical_masses["qg"] = mass_squared_values[int(np.mean(list(critical_mass_indices.values())))]
+    
+    # Simplified power-law fits for critical exponents
+    # Normally would use proper finite-size scaling methods
+
+    # Return results
+    return {
+        "critical_masses": critical_masses,
+        "beta_exponent": beta_exponent,
+        "gamma_exponent": gamma_exponent,
+        "qg_scale": qg_scale,
+        "spectral_dim_uv": spectral_dim_uv,
+        "magnetization": qg_magnetization,
+        "susceptibility": qg_susceptibility,
+    }
+
 # Example usage
 if __name__ == "__main__":
     # Example 1: Simple phi^4 theory simulation

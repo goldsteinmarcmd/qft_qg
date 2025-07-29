@@ -678,35 +678,194 @@ class CategoryQFTConnection:
         return categorical_ft
 
 
+class CategoryQFTBridge:
+    """
+    A bridge class that provides a simplified interface for connecting category theory and quantum field theory.
+    
+    This class serves as a high-level interface to the CategoryQFTConnection class,
+    making it easier to use in other parts of the framework.
+    """
+    
+    def __init__(self, dimension=4, category_type="monoidal"):
+        """
+        Initialize the bridge between category theory and QFT.
+        
+        Parameters:
+        -----------
+        dimension : int
+            Spacetime dimension
+        category_type : str
+            Type of category to use ("monoidal", "braided", "symmetric")
+        """
+        self.connection = CategoryQFTConnection(dimension, category_type)
+        self.dimension = dimension
+        self.category_type = category_type
+    
+    def get_field_operator(self, field_type="scalar"):
+        """
+        Get the field operator for a specific field type.
+        
+        Parameters:
+        -----------
+        field_type : str
+            Type of field ("scalar", "spinor", "vector")
+            
+        Returns:
+        --------
+        sympy.Expr
+            Symbolic expression for the field
+        """
+        return self.connection.construct_field_from_operators(field_type)
+    
+    def get_commutation_relations(self):
+        """
+        Get the commutation relations between operators.
+        
+        Returns:
+        --------
+        dict
+            Dictionary of commutation relations
+        """
+        return self.connection.calculate_commutation_relations()
+    
+    def get_operator_algebra(self, operator_type="scalar"):
+        """
+        Get the operator algebra for a specific field type.
+        
+        Parameters:
+        -----------
+        operator_type : str
+            Type of operator ("scalar", "spinor", "vector")
+            
+        Returns:
+        --------
+        dict
+            Dictionary of operator algebra relations
+        """
+        return self.connection.derive_operator_algebra(operator_type)
+    
+    def get_feynman_rules(self, theory_type="scalar"):
+        """
+        Get the Feynman rules for a specific theory.
+        
+        Parameters:
+        -----------
+        theory_type : str
+            Type of theory ("scalar", "qed", "yang-mills")
+            
+        Returns:
+        --------
+        dict
+            Dictionary of Feynman rules
+        """
+        return self.connection.construct_feynman_rules(theory_type)
+    
+    def construct_categorical_action(self, field_type="scalar"):
+        """
+        Construct a categorical action for a field theory.
+        
+        Parameters:
+        -----------
+        field_type : str
+            Type of field theory
+            
+        Returns:
+        --------
+        dict
+            Categorical representation of the action
+        """
+        # Get the field theory
+        cat_field_theory = self.connection.construct_categorical_field_theory()
+        
+        # Extract the action based on field type
+        if field_type == "scalar":
+            # Create a categorical representation of Klein-Gordon action
+            action = {
+                'objects': cat_field_theory.get('objects', []),
+                'morphisms': cat_field_theory.get('action_morphisms', {}),
+                'variations': cat_field_theory.get('variations', {}),
+                'type': 'klein-gordon'
+            }
+        elif field_type == "spinor":
+            # Create a categorical representation of Dirac action
+            action = {
+                'objects': cat_field_theory.get('objects', []),
+                'morphisms': cat_field_theory.get('action_morphisms', {}),
+                'variations': cat_field_theory.get('variations', {}),
+                'type': 'dirac'
+            }
+        elif field_type == "gauge":
+            # Create a categorical representation of Yang-Mills action
+            action = {
+                'objects': cat_field_theory.get('objects', []),
+                'morphisms': cat_field_theory.get('action_morphisms', {}),
+                'variations': cat_field_theory.get('variations', {}),
+                'type': 'yang-mills'
+            }
+        else:
+            raise ValueError(f"Field type '{field_type}' not supported")
+        
+        return action
+    
+    def qft_to_categorical_mapping(self, qft_object):
+        """
+        Map a QFT object to its categorical representation.
+        
+        Parameters:
+        -----------
+        qft_object : object
+            QFT object to map
+            
+        Returns:
+        --------
+        object
+            Categorical representation
+        """
+        # Implement mapping logic based on object type
+        if hasattr(qft_object, '__name__'):
+            # Check if it's a field type
+            if qft_object.__name__ in ('ScalarField', 'SpinorField', 'VectorField'):
+                # Map to appropriate category object
+                return self.connection.categories['fields'].objects[0]
+        
+        # Default mapping for unknown objects
+        return None
+    
+    def categorical_to_qft_mapping(self, cat_object):
+        """
+        Map a categorical object to its QFT representation.
+        
+        Parameters:
+        -----------
+        cat_object : object
+            Categorical object to map
+            
+        Returns:
+        --------
+        object
+            QFT representation
+        """
+        # Implement reverse mapping
+        # This is a simplified placeholder implementation
+        return None
+
+
 if __name__ == "__main__":
-    # Test the category theory to QFT connection
+    # Create a bridge
+    bridge = CategoryQFTBridge(dimension=4)
     
-    # Create a connection object
-    cat_qft = CategoryQFTConnection(dimension=4, category_type="monoidal")
+    # Get field operators
+    scalar_field = bridge.get_field_operator("scalar")
+    print(f"Scalar field: {scalar_field}")
     
-    # Construct field operators
-    scalar_field = cat_qft.construct_field_from_operators("scalar")
-    spinor_field = cat_qft.construct_field_from_operators("spinor")
-    
-    # Establish the connection between categories and QFT
-    connection = cat_qft.construct_qft_category_connection()
-    
-    # Calculate commutation relations
-    commutators = cat_qft.calculate_commutation_relations()
-    
-    # Derive operator algebras
-    scalar_algebra = cat_qft.derive_operator_algebra("scalar")
-    current_algebra = cat_qft.derive_operator_algebra("current")
-    
-    # Construct path integrals
-    scalar_pi = cat_qft.construct_path_integral("scalar")
-    gauge_pi = cat_qft.construct_path_integral("gauge")
+    # Get commutation relations
+    comm_relations = bridge.get_commutation_relations()
+    print("Commutation relations:")
+    for key, value in comm_relations.items():
+        print(f"  {key}: {value}")
     
     # Get Feynman rules
-    scalar_rules = cat_qft.construct_feynman_rules("scalar")
-    qcd_rules = cat_qft.construct_feynman_rules("qcd")
-    
-    # Construct the full categorical field theory
-    categorical_ft = cat_qft.construct_categorical_field_theory()
-    
-    print("\nCategory theory to QFT connection established successfully.") 
+    feynman_rules = bridge.get_feynman_rules("scalar")
+    print("Feynman rules:")
+    for key, value in feynman_rules.items():
+        print(f"  {key}: {value}") 
