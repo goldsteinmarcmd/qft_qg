@@ -50,6 +50,17 @@ This repository contains a **complete implementation** of a novel framework for 
 - `final_100_percent_summary.py` - Complete framework summary
 - `test_fixes.py` - Numerical stability tests
 
+## 📚 Documentation
+
+**Complete documentation is now organized in the `docs/` folder:**
+
+- **[📖 User Guide](docs/guides/USER_GUIDE.md)** - Get started with the framework
+- **[🔬 Tutorial Examples](docs/guides/TUTORIAL_EXAMPLES.md)** - Step-by-step examples
+- **[📋 API Reference](docs/reference/API_REFERENCE.md)** - Complete technical documentation
+- **[🔬 Research Background](docs/research/RESEARCH_BACKGROUND.md)** - Theoretical foundation
+- **[📊 Experimental Results](docs/results/)** - Detection methods and findings
+- **[📋 Implementation Summary](docs/research/HONEST_QG_DETECTION_IMPLEMENTATION_SUMMARY.md)** - Research outcomes
+
 ## 🚀 Quick Start
 
 ### Installation
