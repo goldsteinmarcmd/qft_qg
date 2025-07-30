@@ -1,0 +1,63 @@
+{
+  "system_info": {
+    "cpu_count": 4,
+    "memory_gb": 8.0
+  },
+  "optimization_results": {
+    "parallel_processing": {
+      "parallel_enabled": true,
+      "speedup_factor": 1.4261295781355596,
+      "sequential_time": 25.667850971221924,
+      "parallel_time": 17.998260021209717,
+      "workers_used": 4,
+      "total_combinations": 50
+    },
+    "memory_optimization": {
+      "initial_memory_gb": 4.173980712890625,
+      "final_memory_gb": 4.175811767578125,
+      "memory_savings_gb": -0.0018310546875,
+      "calculations_performed": 1000
+    },
+    "monte_carlo": {
+      "monte_carlo_enabled": true,
+      "n_samples": 1000,
+      "computation_time": 0.029384136199951172,
+      "mean_dimension": 4.0,
+      "std_dimension": 0.0,
+      "convergence_achieved": "True"
+    },
+    "benchmarks": {
+      "spectral_dimension": {
+        "10_calculations": {
+          "time_seconds": 0.0003151893615722656,
+          "calculations_per_second": 31726.95915279879
+        },
+        "100_calculations": {
+          "time_seconds": 0.0024580955505371094,
+          "calculations_per_second": 40681.90106692532
+        },
+        "1000_calculations": {
+          "time_seconds": 0.052329063415527344,
+          "calculations_per_second": 19109.839441599386
+        }
+      },
+      "rg_flow": {
+        "range_1": {
+          "min_scale": 1e-06,
+          "max_scale": 1000.0,
+          "time_seconds": 0.03434276580810547
+        },
+        "range_2": {
+          "min_scale": 0.001,
+          "max_scale": 1000000.0,
+          "time_seconds": 0.04656624794006348
+        },
+        "range_3": {
+          "min_scale": 1.0,
+          "max_scale": 1000000000.0,
+          "time_seconds": 0.029496192932128906
+        }
+      }
+    }
+  }
+}
